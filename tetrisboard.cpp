@@ -156,8 +156,8 @@ bool tetrisboard::tryMove(const tetrispart &newPart, int newX, int newY) {
     for(int i = 0; i < 4; ++i) {
         int x = newX + newPart.x(i);
         int y = newY - newPart.y(i);
-        if(x < 0 || x >= boardwidth || y < 0 || y >= boardheight || ashape(x, y) != noshape) return false;
-        //if(shape(x, y) != noshape) return false;
+        if(x < 0 || x >= boardwidth || y >= boardheight || ashape(x, y) != noshape) return false;
+        //if(ashape(x, y) != noshape) return false;
     }
     currentPart = newPart;
     curX = newX;
@@ -179,7 +179,7 @@ void tetrisboard::paintEvent(QPaintEvent *event) {
         for(int j = 0; j < boardwidth; ++j) {
             tetrisshapes shape = ashape(j, boardheight - i - 1);
             if(shape != noshape) {
-                drawSquare(painter, rect.left() + j * squereWidth(), boardTop + i * squereHeight(), shape);
+                drawSquare(painter, rect.left() + j * squereWidth(), boardTop + i * squereHeight() - 500, shape);
             }
         }
     }
@@ -187,7 +187,7 @@ void tetrisboard::paintEvent(QPaintEvent *event) {
         for(int i = 0; i < 4; ++i) {
             int x = curX + currentPart.x(i);
             int y = curY + currentPart.y(i);
-            drawSquare(painter, rect.left() + x * squereWidth(), boardTop + (boardheight - y - 1) * squereHeight(), currentPart.part());
+            drawSquare(painter, rect.left() + x * squereWidth(), boardTop + (boardheight - y - 1) * squereHeight() - 500, currentPart.part());
         }
     }
 }

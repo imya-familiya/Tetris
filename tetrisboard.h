@@ -26,7 +26,7 @@ protected:
 private:
     enum {
         boardwidth = 10,
-        boardheight = 22,
+        boardheight = 22
     };
 
     tetrisshapes &ashape(int x, int y) { return board[(y * boardwidth) + x]; }
