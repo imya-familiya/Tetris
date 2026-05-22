@@ -77,6 +77,9 @@ void tetrisboard::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_Up:
         tryMove(currentPart.rotateRight(), curX, curY);
         break;
+    case Qt::Key_Space:
+        tryMove(currentPart, curX, curY - 1);
+        break;
     default:
         QFrame::keyPressEvent(event);
     }
@@ -108,6 +111,7 @@ void tetrisboard::partDrop(int dropHeight) {
 
 void tetrisboard::removeFullLine() {
     int numLine = 0;
+
     for(int i = boardheight - 1; i >= 0; --i) {
         bool isFull = true;
         for(int j = 0; j < boardwidth; ++j) {
@@ -134,7 +138,18 @@ void tetrisboard::removeFullLine() {
     }
 
     if(numLine > 0) {
-        score += numLine;
+        linesRemoved += numLine;
+        emit linesRemoveChange(linesRemoved);
+
+        int newLevel = linesRemoved / 5 + 1;
+        if(newLevel != level) {
+            level = newLevel;
+            emit levelChange(level);
+            timer.start(timeoutTime(), this);
+        }
+
+        score += numLine * level;
+        emit scoreChange(score);
     }
 }
 
@@ -191,20 +206,20 @@ void tetrisboard::paintEvent(QPaintEvent *event) {
     QFrame::paintEvent(event);
     QPainter painter(this);
     QRect rect = contentsRect();
-    int boardTop = rect.bottom() - boardheight * 4;
+    int boardTop = rect.bottom() - boardheight * squereHeight();
     for(int i = 0; i < boardheight; ++i) {
         for(int j = 0; j < boardwidth; ++j) {
             tetrisshapes shape = ashape(j, boardheight - i - 1);
             if(shape != noshape) {
-                drawSquare(painter, rect.left() + j * squereWidth(), boardTop + i * squereHeight() - 500, shape);
+                drawSquare(painter, rect.left() + j * squereWidth(), boardTop + i * squereHeight(), shape);
             }
         }
     }
     if(currentPart.part() != noshape) {
         for(int i = 0; i < 4; ++i) {
             int x = curX + currentPart.x(i);
-            int y = curY + currentPart.y(i);
-            drawSquare(painter, rect.left() + x * squereWidth(), boardTop + (boardheight - y - 1) * squereHeight() - 500, currentPart.part());
+            int y = curY - currentPart.y(i);
+            drawSquare(painter, rect.left() + x * squereWidth(), boardTop + (boardheight - y - 1) * squereHeight(), currentPart.part());
         }
     }
 }

@@ -36,6 +36,7 @@ TetrisWindow::TetrisWindow() {
     connect(pause, &QPushButton::clicked, board, &tetrisboard::pause);
     connect(quit, &QPushButton::clicked, qApp, &QApplication::quit);
 
+    connect(board, &tetrisboard::scoreChange, score, qOverload<int>(&QLCDNumber::display));
     connect(board, &tetrisboard::levelChange, level, qOverload<int>(&QLCDNumber::display));
     connect(board, &tetrisboard::linesRemoveChange, lines, qOverload<int>(&QLCDNumber::display));
 

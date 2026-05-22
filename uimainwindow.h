@@ -9,7 +9,7 @@ public:
 
     QWidget *centralWidget;
 
-    void setupUI(QMainWindow *MainWindow) {
+    void setupUi(QMainWindow *MainWindow) {
         MainWindow -> resize(400, 460);
         centralWidget = new QWidget(MainWindow);
         MainWindow -> setCentralWidget(centralWidget);
