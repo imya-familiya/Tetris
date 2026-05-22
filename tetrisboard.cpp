@@ -39,7 +39,14 @@ void tetrisboard::start() {
 }
 
 void tetrisboard::pause() {
+    if(!isStarted) return;
 
+    isPaused = !isPaused;
+    if(isPaused) {
+        timer.stop();
+    } else {
+        timer.start(timeoutTime(),this);
+    }
 }
 
 void tetrisboard::timerEvent(QTimerEvent *event) {
@@ -100,7 +107,7 @@ void tetrisboard::partDrop(int dropHeight) {
 }
 
 void tetrisboard::removeFullLine() {
-    int numFullLines = 0;
+    int numLine = 0;
     for(int i = boardheight - 1; i >= 0; --i) {
         bool isFull = true;
         for(int j = 0; j < boardwidth; ++j) {
@@ -111,24 +118,23 @@ void tetrisboard::removeFullLine() {
         }
 
         if(isFull) {
-            ++numFullLines;
-
-            for(int k = i; k > 0; --k) {
+            for(int k = i; k < boardheight; ++k) {
                 for(int j = 0; j < boardwidth; ++j) {
-                    ashape(j, k) = ashape(j, k - 1);
+                    ashape(j, k) = ashape(j, k + 1);
                 }
             }
 
             for(int j = 0; j < boardwidth; ++j) {
-                ashape(j, i) = noshape;
+                ashape(j, boardheight - 1) = noshape;
             }
 
             ++i;
+            ++numLine;
         }
     }
 
-    if (numFullLines > 0) {
-
+    if(numLine > 0) {
+        score += numLine;
     }
 }
 
@@ -169,7 +175,6 @@ bool tetrisboard::tryMove(const tetrispart &newPart, int newX, int newY) {
         int x = newX + newPart.x(i);
         int y = newY - newPart.y(i);
         if(x < 0 || x >= boardwidth || y < 0 || y >= boardheight || ashape(x, y) != noshape) return false;
-        //if(ashape(x, y) != noshape) return false;
     }
     currentPart = newPart;
     curX = newX;
